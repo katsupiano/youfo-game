@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>YOU.FO体験会 ミニゲームランキング</title>
+<style>
+:root{
+  --red:#d5102a; --red-dark:#a80c20; --ink:#1b1b1f; --paper:#f7f6f3;
+  --card:#ffffff; --line:#e8e5df; --muted:#8a8781; --gold:#c9a227;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  background:var(--paper); color:var(--ink); min-height:100vh;
+}
+.wrap{max-width:640px;margin:0 auto;padding:0 14px 90px}
+header.hero{
+  background:linear-gradient(120deg,var(--red) 0%,var(--red-dark) 100%);
+  color:#fff; padding:20px 18px 14px; position:relative; overflow:hidden;
+}
+header.hero::after{
+  content:""; position:absolute; right:-40px; top:-60px; width:190px; height:190px;
+  border:14px solid rgba(255,255,255,.14); border-radius:50%;
+}
+header.hero::before{
+  content:""; position:absolute; right:52px; top:118px; width:70px; height:8px;
+  background:rgba(255,255,255,.18); border-radius:4px; transform:rotate(-35deg);
+}
+.hero .kicker{font-size:.72rem; letter-spacing:.22em; opacity:.9; font-weight:700}
+.hero h1{font-size:1.42rem; font-weight:800; line-height:1.3; margin-top:2px}
+.hero .sub{font-size:.78rem; opacity:.85; margin-top:4px}
+.tabs{display:flex; gap:8px; margin:14px 0 10px}
+.tab{
+  flex:1; border:2px solid var(--line); background:var(--card); border-radius:12px;
+  padding:11px 4px; text-align:center; font-weight:700; font-size:.95rem; cursor:pointer;
+  color:var(--muted); transition:.15s;
+}
+.tab.on{border-color:var(--red); color:var(--red); background:#fff5f6}
+.tab .em{font-size:1.1rem; display:block; margin-bottom:1px}
+.chips{display:flex; gap:6px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  border:1.5px solid var(--line); background:var(--card); color:var(--muted);
+  border-radius:999px; padding:5px 13px; font-size:.8rem; font-weight:700;
+  white-space:nowrap; cursor:pointer;
+}
+.chip.on{border-color:var(--ink); color:#fff; background:var(--ink)}
+.note{font-size:.72rem; color:var(--muted); text-align:center; margin:8px 0}
+.podium{display:flex; gap:8px; align-items:stretch; margin-bottom:12px}
+.pcard{
+  flex:1; background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+  padding:14px 8px 12px; text-align:center; position:relative;
+}
+.pcard.first{border-color:var(--gold); box-shadow:0 4px 14px rgba(201,162,39,.18)}
+.pcard .medal{font-size:1.5rem}
+.pcard .pname{font-weight:800; font-size:.92rem; margin-top:4px; word-break:break-all; line-height:1.25}
+.pcard .pdiv{font-size:.68rem; color:var(--muted); margin-top:2px; min-height:1em}
+.pcard .pscore{font-size:1.5rem; font-weight:900; color:var(--red); margin-top:6px}
+.pcard .unit{font-size:.72rem; font-weight:700; color:var(--muted)}
+.newbadge{
+  position:absolute; top:-8px; right:-4px; background:var(--red); color:#fff;
+  font-size:.6rem; font-weight:800; border-radius:999px; padding:2px 8px;
+  animation:pop .4s ease;
+}
+@keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.15)}100%{transform:scale(1)}}
+.list{background:var(--card); border:1.5px solid var(--line); border-radius:14px; overflow:hidden}
+.row{display:flex; align-items:center; padding:11px 14px; border-top:1px solid var(--line); gap:12px}
+.row:first-child{border-top:none}
+.rank{width:2em; font-weight:900; font-size:1.05rem; color:var(--muted); text-align:center; flex-shrink:0}
+.rname{flex:1; min-width:0}
+.rname .n{font-weight:700; font-size:.95rem; word-break:break-all; line-height:1.3}
+.rname .d{font-size:.68rem; color:var(--muted)}
+.rscore{font-weight:900; font-size:1.15rem; color:var(--ink); flex-shrink:0}
+.rscore .unit{font-size:.7rem; color:var(--muted); font-weight:700}
+.row .nb{background:var(--red); color:#fff; font-size:.58rem; font-weight:800; border-radius:999px; padding:2px 7px; flex-shrink:0}
+.empty{padding:38px 10px; text-align:center; color:var(--muted); font-size:.88rem; line-height:1.8}
+.searchbox{margin:14px 0 4px}
+.searchbox input{
+  width:100%; border:1.5px solid var(--line); border-radius:12px; padding:11px 14px;
+  font-size:16px; background:var(--card); outline:none;
+}
+.searchbox input:focus{border-color:var(--red)}
+.statusbar{
+  position:fixed; bottom:0; left:0; right:0; background:rgba(27,27,31,.92); color:#fff;
+  backdrop-filter:blur(6px); font-size:.72rem; padding:9px 16px; display:flex;
+  justify-content:space-between; align-items:center;
+}
+.dot{display:inline-block; width:7px; height:7px; border-radius:50%; background:#3ecf6f; margin-right:6px; animation:blink 2s infinite}
+@keyframes blink{50%{opacity:.3}}
+.flash{
+  position:fixed; top:14px; left:50%; transform:translateX(-50%); z-index:50;
+  background:var(--gold); color:#fff; font-weight:800; font-size:.85rem;
+  border-radius:999px; padding:9px 20px; box-shadow:0 6px 18px rgba(0,0,0,.25);
+  opacity:0; pointer-events:none; transition:opacity .3s; white-space:nowrap;
+}
+.flash.show{opacity:1}
+</style>
+</head>
+<body>
+<header class="hero">
+  <div class="kicker">YOU.FO TRIAL EVENT</div>
+  <h1>ミニゲーム ランキング</h1>
+  <div class="sub">記録は随時更新中。自分の順位をチェックしよう!</div>
+</header>
+<div class="wrap">
+  <div class="tabs" id="tabs">
+    <div class="tab on" data-g="strike"><span class="em">&#127919;</span>ストラックアウト</div>
+    <div class="tab" data-g="rally"><span class="em">&#128257;</span>リングラリー</div>
+  </div>
+  <div class="chips" id="chips"></div>
+  <div class="podium" id="podium"></div>
+  <div class="list" id="list"></div>
+  <div class="searchbox"><input id="q" type="search" placeholder="名前で自分の記録をさがす"></div>
+  <div class="note" id="count"></div>
+</div>
+<div class="statusbar"><span><span class="dot"></span>自動更新中</span><span id="upd">-</span></div>
+<div class="flash" id="flash"></div>
+<script>
+var API = "https://bhvtqqaedqjrdlnvuekd.supabase.co/functions/v1/taikenkai/api/state";
+var game = "strike";
+var division = "";
+var all = [];
+var lastTop = {};
+var UNITS = { strike: "点", rally: "回" };
+
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function nameOf(e){ return e.name2 ? e.name1 + " & " + e.name2 : e.name1; }
+function isNew(e){ return (Date.now() - new Date(e.created_at).getTime()) < 5*60*1000; }
+
+function ranked(list){
+  var sorted = list.slice().sort(function(a,b){
+    if (b.score !== a.score) return b.score - a.score;
+    return new Date(a.created_at) - new Date(b.created_at);
+  });
+  var out = []; var prev = null; var rank = 0;
+  for (var i = 0; i < sorted.length; i++){
+    if (prev === null || sorted[i].score < prev) { rank = i + 1; prev = sorted[i].score; }
+    out.push({ e: sorted[i], rank: rank });
+  }
+  return out;
+}
+
+function render(){
+  var unit = UNITS[game];
+  var pool = all.filter(function(e){ return e.game === game; });
+  var divs = [];
+  pool.forEach(function(e){ if (e.division && divs.indexOf(e.division) < 0) divs.push(e.division); });
+  var ch = '<div class="chip' + (division === "" ? " on" : "") + '" data-d="">すべて</div>';
+  divs.forEach(function(d){
+    ch += '<div class="chip' + (division === d ? " on" : "") + '" data-d="' + esc(d) + '">' + esc(d) + "</div>";
+  });
+  document.getElementById("chips").innerHTML = divs.length ? ch : "";
+  if (division && divs.indexOf(division) < 0) division = "";
+
+  var q = document.getElementById("q").value.trim();
+  var filtered = pool.filter(function(e){ return !division || e.division === division; });
+  var rows = ranked(filtered);
+  if (q) rows = rows.filter(function(r){ return nameOf(r.e).indexOf(q) >= 0; });
+
+  var medals = ["&#129351;","&#129352;","&#129353;"];
+  var pod = ""; var rest = "";
+  rows.forEach(function(r, i){
+    var nb = isNew(r.e) ? '<span class="nb">NEW</span>' : "";
+    if (!q && i < 3 && r.rank <= 3){
+      pod += '<div class="pcard' + (r.rank === 1 ? " first" : "") + '">'
+        + (isNew(r.e) ? '<div class="newbadge">NEW</div>' : "")
+        + '<div class="medal">' + medals[r.rank - 1] + "</div>"
+        + '<div class="pname">' + esc(nameOf(r.e)) + "</div>"
+        + '<div class="pdiv">' + esc(r.e.division || "") + "</div>"
+        + '<div class="pscore">' + r.e.score + '<span class="unit"> ' + unit + "</span></div>"
+        + "</div>";
+    } else {
+      rest += '<div class="row"><div class="rank">' + r.rank + '</div>'
+        + '<div class="rname"><div class="n">' + esc(nameOf(r.e)) + "</div>"
+        + (r.e.division ? '<div class="d">' + esc(r.e.division) + "</div>" : "")
+        + "</div>" + nb
+        + '<div class="rscore">' + r.e.score + '<span class="unit"> ' + unit + "</span></div></div>";
+    }
+  });
+  document.getElementById("podium").innerHTML = pod;
+  document.getElementById("list").innerHTML = rest ||
+    (pod ? "" : '<div class="empty">まだ記録がありません。<br>いちばんのりを狙おう!</div>');
+  document.getElementById("count").textContent =
+    filtered.length ? "エントリー " + filtered.length + " 件" : "";
+
+  var top = rows.length ? rows[0] : null;
+  var key = game + "|" + division;
+  if (top && !q){
+    var id = top.e.id;
+    if (lastTop[key] && lastTop[key] !== id && isNew(top.e)) flash("&#128081; " + esc(nameOf(top.e)) + " さんが1位に!");
+    lastTop[key] = id;
+  }
+}
+
+function flash(msg){
+  var f = document.getElementById("flash");
+  f.innerHTML = msg;
+  f.classList.add("show");
+  setTimeout(function(){ f.classList.remove("show"); }, 3500);
+}
+
+function load(){
+  fetch(API).then(function(r){ return r.json(); }).then(function(d){
+    all = d.entries || [];
+    render();
+    var t = new Date();
+    document.getElementById("upd").textContent =
+      ("0" + t.getHours()).slice(-2) + ":" + ("0" + t.getMinutes()).slice(-2) + ":" + ("0" + t.getSeconds()).slice(-2) + " 更新";
+  }).catch(function(){});
+}
+
+document.getElementById("tabs").addEventListener("click", function(ev){
+  var t = ev.target.closest(".tab"); if (!t) return;
+  game = t.getAttribute("data-g"); division = "";
+  document.querySelectorAll(".tab").forEach(function(x){ x.classList.toggle("on", x === t); });
+  render();
+});
+document.getElementById("chips").addEventListener("click", function(ev){
+  var c = ev.target.closest(".chip"); if (!c) return;
+  division = c.getAttribute("data-d");
+  render();
+});
+document.getElementById("q").addEventListener("input", render);
+document.addEventListener("visibilitychange", function(){ if (!document.hidden) load(); });
+load();
+setInterval(load, 8000);
+</script>
+</body>
+</html>
