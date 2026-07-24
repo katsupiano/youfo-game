@@ -122,6 +122,10 @@ header.hero::before{
 }
 .flash.show{opacity:1}
 .sectionttl{font-size:.8rem; font-weight:800; color:var(--muted); letter-spacing:.08em; margin:4px 0 8px}
+.season{
+  display:inline-block; margin-top:8px; background:rgba(255,255,255,.16); color:#fff;
+  font-size:.7rem; font-weight:800; padding:4px 11px; border-radius:999px; letter-spacing:.02em;
+}
 </style>
 </head>
 <body>
@@ -129,11 +133,12 @@ header.hero::before{
   <div class="kicker">YOU.FO OFFICIAL</div>
   <h1>リングラリー ランキング</h1>
   <div class="sub">2人いれば、いつでもどこでも挑戦できる。</div>
+  <div class="season">&#127942; 2026年下半期チャレンジ(2026.7-12)</div>
 </header>
 <div class="wrap">
   <div class="concept">
     <span class="cchip">&#129309; 2人1組</span>
-    <span class="cchip">&#9201; 3分間</span>
+    <span class="cchip">&#9201; 2分間</span>
     <span class="cchip">&#128257; 何度でも挑戦OK</span>
     <span class="cchip">&#127757; 会場でもオンラインでも</span>
   </div>
@@ -141,16 +146,17 @@ header.hero::before{
     <summary>&#128214; ルールと参加方法 <span class="arw">&#9654;</span></summary>
     <div class="rbody">
       <h3>リングラリーとは</h3>
-      YOU.FO公式のペア協力型ラリー種目。2人で向かい合ってリングを投げ合い、3分間の合計スコアで競います。チーム戦のリングクロスと違って<b>2人だけで競技が成立</b>し、同じ時間・同じ会場に集まらなくても記録で競い合えるのが特徴です。
-      <h3>基本ルール(JAPAN CHALLENGE 2026 要項準拠)</h3>
+      YOU.FO公式のペア協力型ラリー種目。2人で向かい合ってリングを投げ合い、2分間の合計スコアで競えます。チーム戦のリングクロスと違って<b>2人だけで競技が成立</b>し、同じ時間・同じ会場に集まらなくても記録で競い合えるのが特徴です。
+      <h3>基本ルール</h3>
       <table class="rtable">
         <tr><td>人数</td><td>2人1組(ペア)</td></tr>
         <tr><td>距離</td><td>7m以上・自由(ペアごとに好きな距離でOK)</td></tr>
-        <tr><td>時間</td><td>3分間</td></tr>
+        <tr><td>時間</td><td>2分間</td></tr>
+        <tr><td>ライン</td><td><b>キャッチする瞬間に体が7mラインより前に出ていた場合、そのキャッチは無効(得点加算なし)</b>。キャッチした後は、次に投げやすい場所へ自由に移動してOK(毎回同じ位置から投げなくてよい)</td></tr>
         <tr><td>挑戦回数</td><td>何度でも挑戦OK。ランキングにはペアのベストスコアが載ります</td></tr>
       </table>
       <h3>スコアのつけ方</h3>
-      3分間の全投球を1球ずつ採点し、ペア2人の合計点で競います。
+      2分間の全投球を1球ずつ採点し、ペア2人の合計点で競います。
       <div class="score3">
         <div class="sc"><b>+2点</b><span>スティックで<br>キャッチ成功</span></div>
         <div class="sc"><b>+1点</b><span>リングに当たったが<br>落下</span></div>
@@ -163,7 +169,7 @@ header.hero::before{
         今後、<b>会場に来られなくてもオンラインで記録に挑戦できる仕組み</b>を準備中です。挑戦の様子を撮影した<b>証拠動画を協会に提出</b>いただき、確認のうえランキングに掲載する方式を予定しています。<br>
         お問い合わせ: 一般社団法人 日本YOU.FO協会 info@youfo.or.jp
       </div>
-      <div class="rsrc">※ルールは YOU.FO JAPAN CHALLENGE 2026 募集要項(6-4 リングラリー)に基づきます。大会では挑戦回数上限等が別途定められる場合があります。</div>
+      <div class="rsrc">※基本ルールは YOU.FO JAPAN CHALLENGE 2026 募集要項(6-4 リングラリー)に基づき、ライン判定は実施を踏まえて追記しています。大会では挑戦回数上限等が別途定められる場合があります。</div>
     </div>
   </details>
   <div class="sectionttl">&#127942; RANKING</div>
@@ -194,6 +200,7 @@ function pairKey(e){
   return ns.join("|");
 }
 
+// 同一ペアはベストスコアのみ残す(同点なら先に出した記録)。挑戦回数も数える
 function bestPerPair(list){
   var map = {};
   list.forEach(function(e){
@@ -206,6 +213,16 @@ function bestPerPair(list){
     }
   });
   return Object.keys(map).map(function(k){ return map[k]; });
+}
+
+// 日付 + 体験会名/会場 + 部門 + 挑戦回数 をまとめた表示用サブテキスト
+function subLine(r){
+  var t = new Date(r.e.created_at);
+  var parts = [(t.getMonth() + 1) + "/" + t.getDate()];
+  if (r.e.event_label) parts.push(esc(r.e.event_label));
+  if (r.e.division) parts.push(esc(r.e.division));
+  if (r.tries > 1) parts.push("挑戦" + r.tries + "回");
+  return parts.join(" · ");
 }
 
 function ranked(list){
@@ -242,7 +259,7 @@ function render(){
   var medals = ["&#129351;","&#129352;","&#129353;"];
   var pod = ""; var rest = "";
   rows.forEach(function(r, i){
-    var sub = (r.e.division ? esc(r.e.division) : "") + (r.tries > 1 ? (r.e.division ? " · " : "") + "挑戦" + r.tries + "回" : "");
+    var sub = subLine(r);
     var nb = isNew(r.e) ? '<span class="nb">NEW</span>' : "";
     if (!q && i < 3 && r.rank <= 3){
       pod += '<div class="pcard' + (r.rank === 1 ? " first" : "") + '">'
