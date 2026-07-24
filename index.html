@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>YOU.FO体験会 ミニゲームランキング</title>
+<title>YOU.FO リングラリー ランキング</title>
 <style>
 :root{
   --red:#d5102a; --red-dark:#a80c20; --ink:#1b1b1f; --paper:#f7f6f3;
@@ -18,7 +18,7 @@ body{
 .wrap{max-width:640px;margin:0 auto;padding:0 14px 90px}
 header.hero{
   background:linear-gradient(120deg,var(--red) 0%,var(--red-dark) 100%);
-  color:#fff; padding:20px 18px 14px; position:relative; overflow:hidden;
+  color:#fff; padding:20px 18px 16px; position:relative; overflow:hidden;
 }
 header.hero::after{
   content:""; position:absolute; right:-40px; top:-60px; width:190px; height:190px;
@@ -31,23 +31,39 @@ header.hero::before{
 .hero .kicker{font-size:.72rem; letter-spacing:.22em; opacity:.9; font-weight:700}
 .hero h1{font-size:1.42rem; font-weight:800; line-height:1.3; margin-top:2px}
 .hero .sub{font-size:.78rem; opacity:.85; margin-top:4px}
-.tabs{display:flex; gap:8px; margin:14px 0 10px}
-.tab{
-  flex:1; border:2px solid var(--line); background:var(--card); border-radius:12px;
-  padding:11px 4px; text-align:center; font-weight:700; font-size:.95rem; cursor:pointer;
-  color:var(--muted); transition:.15s;
+.concept{display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 0}
+.cchip{
+  background:#fff; border:1.5px solid var(--line); border-radius:999px;
+  font-size:.72rem; font-weight:800; padding:6px 12px; color:var(--ink);
 }
-.tab.on{border-color:var(--red); color:var(--red); background:#fff5f6}
-.tab .em{font-size:1.1rem; display:block; margin-bottom:1px}
-.chips{display:flex; gap:6px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none}
-.chips::-webkit-scrollbar{display:none}
-.chip{
-  border:1.5px solid var(--line); background:var(--card); color:var(--muted);
-  border-radius:999px; padding:5px 13px; font-size:.8rem; font-weight:700;
-  white-space:nowrap; cursor:pointer;
+.rules{
+  background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+  margin:10px 0 14px; overflow:hidden;
 }
-.chip.on{border-color:var(--ink); color:#fff; background:var(--ink)}
-.note{font-size:.72rem; color:var(--muted); text-align:center; margin:8px 0}
+.rules summary{
+  list-style:none; cursor:pointer; padding:13px 16px; font-weight:800; font-size:.92rem;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.rules summary::-webkit-details-marker{display:none}
+.rules summary .arw{transition:.2s; color:var(--muted)}
+.rules[open] summary .arw{transform:rotate(90deg)}
+.rbody{padding:0 16px 16px; font-size:.85rem; line-height:1.75}
+.rbody h3{font-size:.8rem; color:var(--red); margin:14px 0 6px; letter-spacing:.05em}
+.rbody h3:first-child{margin-top:0}
+.rtable{width:100%; border-collapse:collapse; font-size:.82rem; margin:4px 0}
+.rtable td{border-top:1px solid var(--line); padding:7px 4px; vertical-align:top}
+.rtable tr:first-child td{border-top:none}
+.rtable td:first-child{font-weight:800; white-space:nowrap; padding-right:12px; color:var(--muted); width:6.5em}
+.score3{display:flex; gap:6px; margin:6px 0 2px}
+.sc{flex:1; border:1.5px solid var(--line); border-radius:10px; text-align:center; padding:8px 2px}
+.sc b{display:block; font-size:1.15rem; color:var(--red)}
+.sc span{font-size:.68rem; color:var(--muted); font-weight:700; line-height:1.3; display:block; margin-top:2px}
+.note-online{
+  background:#fff5f6; border:1.5px dashed var(--red); border-radius:10px;
+  padding:10px 12px; font-size:.8rem; line-height:1.7; margin-top:8px;
+}
+.note-online b{color:var(--red)}
+.rsrc{font-size:.68rem; color:var(--muted); margin-top:10px}
 .podium{display:flex; gap:8px; align-items:stretch; margin-bottom:12px}
 .pcard{
   flex:1; background:var(--card); border:1.5px solid var(--line); border-radius:14px;
@@ -65,6 +81,15 @@ header.hero::before{
   animation:pop .4s ease;
 }
 @keyframes pop{0%{transform:scale(0)}80%{transform:scale(1.15)}100%{transform:scale(1)}}
+.chips{display:flex; gap:6px; overflow-x:auto; padding:2px 0 8px; scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{
+  border:1.5px solid var(--line); background:var(--card); color:var(--muted);
+  border-radius:999px; padding:5px 13px; font-size:.8rem; font-weight:700;
+  white-space:nowrap; cursor:pointer;
+}
+.chip.on{border-color:var(--ink); color:#fff; background:var(--ink)}
+.note{font-size:.72rem; color:var(--muted); text-align:center; margin:8px 0}
 .list{background:var(--card); border:1.5px solid var(--line); border-radius:14px; overflow:hidden}
 .row{display:flex; align-items:center; padding:11px 14px; border-top:1px solid var(--line); gap:12px}
 .row:first-child{border-top:none}
@@ -96,34 +121,65 @@ header.hero::before{
   opacity:0; pointer-events:none; transition:opacity .3s; white-space:nowrap;
 }
 .flash.show{opacity:1}
+.sectionttl{font-size:.8rem; font-weight:800; color:var(--muted); letter-spacing:.08em; margin:4px 0 8px}
 </style>
 </head>
 <body>
 <header class="hero">
-  <div class="kicker">YOU.FO TRIAL EVENT</div>
-  <h1>ミニゲーム ランキング</h1>
-  <div class="sub">記録は随時更新中。自分の順位をチェックしよう!</div>
+  <div class="kicker">YOU.FO OFFICIAL</div>
+  <h1>リングラリー ランキング</h1>
+  <div class="sub">2人いれば、いつでもどこでも挑戦できる。</div>
 </header>
 <div class="wrap">
-  <div class="tabs" id="tabs">
-    <div class="tab on" data-g="strike"><span class="em">&#127919;</span>ストラックアウト</div>
-    <div class="tab" data-g="rally"><span class="em">&#128257;</span>リングラリー</div>
+  <div class="concept">
+    <span class="cchip">&#129309; 2人1組</span>
+    <span class="cchip">&#9201; 3分間</span>
+    <span class="cchip">&#128257; 何度でも挑戦OK</span>
+    <span class="cchip">&#127757; 会場でもオンラインでも</span>
   </div>
+  <details class="rules">
+    <summary>&#128214; ルールと参加方法 <span class="arw">&#9654;</span></summary>
+    <div class="rbody">
+      <h3>リングラリーとは</h3>
+      YOU.FO公式のペア協力型ラリー種目。2人で向かい合ってリングを投げ合い、3分間の合計スコアで競います。チーム戦のリングクロスと違って<b>2人だけで競技が成立</b>し、同じ時間・同じ会場に集まらなくても記録で競い合えるのが特徴です。
+      <h3>基本ルール(JAPAN CHALLENGE 2026 要項準拠)</h3>
+      <table class="rtable">
+        <tr><td>人数</td><td>2人1組(ペア)</td></tr>
+        <tr><td>距離</td><td>7m以上・自由(ペアごとに好きな距離でOK)</td></tr>
+        <tr><td>時間</td><td>3分間</td></tr>
+        <tr><td>挑戦回数</td><td>何度でも挑戦OK。ランキングにはペアのベストスコアが載ります</td></tr>
+      </table>
+      <h3>スコアのつけ方</h3>
+      3分間の全投球を1球ずつ採点し、ペア2人の合計点で競います。
+      <div class="score3">
+        <div class="sc"><b>+2点</b><span>スティックで<br>キャッチ成功</span></div>
+        <div class="sc"><b>+1点</b><span>リングに当たったが<br>落下</span></div>
+        <div class="sc"><b>0点</b><span>リングに<br>当たらなかった</span></div>
+      </div>
+      <h3>参加方法</h3>
+      <b>&#127967; 会場参加</b>: 体験会・イベント会場の運営スタッフに「リングラリーやりたい」と声をかけてください。その場で計測して記録を登録します。<br>
+      <b>&#128241; オンライン参加(準備中)</b>:
+      <div class="note-online">
+        今後、<b>会場に来られなくてもオンラインで記録に挑戦できる仕組み</b>を準備中です。挑戦の様子を撮影した<b>証拠動画を協会に提出</b>いただき、確認のうえランキングに掲載する方式を予定しています。<br>
+        お問い合わせ: 一般社団法人 日本YOU.FO協会 info@youfo.or.jp
+      </div>
+      <div class="rsrc">※ルールは YOU.FO JAPAN CHALLENGE 2026 募集要項(6-4 リングラリー)に基づきます。大会では挑戦回数上限等が別途定められる場合があります。</div>
+    </div>
+  </details>
+  <div class="sectionttl">&#127942; RANKING</div>
   <div class="chips" id="chips"></div>
   <div class="podium" id="podium"></div>
   <div class="list" id="list"></div>
-  <div class="searchbox"><input id="q" type="search" placeholder="名前で自分の記録をさがす"></div>
+  <div class="searchbox"><input id="q" type="search" placeholder="名前で自分たちの記録をさがす"></div>
   <div class="note" id="count"></div>
 </div>
 <div class="statusbar"><span><span class="dot"></span>自動更新中</span><span id="upd">-</span></div>
 <div class="flash" id="flash"></div>
 <script>
 var API = "https://bhvtqqaedqjrdlnvuekd.supabase.co/functions/v1/taikenkai/api/state";
-var game = "strike";
 var division = "";
 var all = [];
-var lastTop = {};
-var UNITS = { strike: "点", rally: "回" };
+var lastTopKey = {};
 
 function esc(s){
   return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
@@ -132,25 +188,45 @@ function esc(s){
 }
 function nameOf(e){ return e.name2 ? e.name1 + " & " + e.name2 : e.name1; }
 function isNew(e){ return (Date.now() - new Date(e.created_at).getTime()) < 5*60*1000; }
+function pairKey(e){
+  var ns = [String(e.name1 || "").trim(), String(e.name2 || "").trim()];
+  ns.sort();
+  return ns.join("|");
+}
+
+function bestPerPair(list){
+  var map = {};
+  list.forEach(function(e){
+    var k = pairKey(e);
+    if (!map[k]){ map[k] = { best: e, tries: 1 }; return; }
+    map[k].tries++;
+    var b = map[k].best;
+    if (e.score > b.score || (e.score === b.score && new Date(e.created_at) < new Date(b.created_at))){
+      map[k].best = e;
+    }
+  });
+  return Object.keys(map).map(function(k){ return map[k]; });
+}
 
 function ranked(list){
   var sorted = list.slice().sort(function(a,b){
-    if (b.score !== a.score) return b.score - a.score;
-    return new Date(a.created_at) - new Date(b.created_at);
+    if (b.best.score !== a.best.score) return b.best.score - a.best.score;
+    return new Date(a.best.created_at) - new Date(b.best.created_at);
   });
   var out = []; var prev = null; var rank = 0;
   for (var i = 0; i < sorted.length; i++){
-    if (prev === null || sorted[i].score < prev) { rank = i + 1; prev = sorted[i].score; }
-    out.push({ e: sorted[i], rank: rank });
+    if (prev === null || sorted[i].best.score < prev) { rank = i + 1; prev = sorted[i].best.score; }
+    out.push({ e: sorted[i].best, tries: sorted[i].tries, rank: rank });
   }
   return out;
 }
 
 function render(){
-  var unit = UNITS[game];
-  var pool = all.filter(function(e){ return e.game === game; });
+  var pool = all.filter(function(e){ return e.game === "rally"; });
+  var pairs = bestPerPair(pool);
+
   var divs = [];
-  pool.forEach(function(e){ if (e.division && divs.indexOf(e.division) < 0) divs.push(e.division); });
+  pairs.forEach(function(p){ if (p.best.division && divs.indexOf(p.best.division) < 0) divs.push(p.best.division); });
   var ch = '<div class="chip' + (division === "" ? " on" : "") + '" data-d="">すべて</div>';
   divs.forEach(function(d){
     ch += '<div class="chip' + (division === d ? " on" : "") + '" data-d="' + esc(d) + '">' + esc(d) + "</div>";
@@ -159,42 +235,45 @@ function render(){
   if (division && divs.indexOf(division) < 0) division = "";
 
   var q = document.getElementById("q").value.trim();
-  var filtered = pool.filter(function(e){ return !division || e.division === division; });
+  var filtered = pairs.filter(function(p){ return !division || p.best.division === division; });
   var rows = ranked(filtered);
   if (q) rows = rows.filter(function(r){ return nameOf(r.e).indexOf(q) >= 0; });
 
   var medals = ["&#129351;","&#129352;","&#129353;"];
   var pod = ""; var rest = "";
   rows.forEach(function(r, i){
+    var sub = (r.e.division ? esc(r.e.division) : "") + (r.tries > 1 ? (r.e.division ? " · " : "") + "挑戦" + r.tries + "回" : "");
     var nb = isNew(r.e) ? '<span class="nb">NEW</span>' : "";
     if (!q && i < 3 && r.rank <= 3){
       pod += '<div class="pcard' + (r.rank === 1 ? " first" : "") + '">'
         + (isNew(r.e) ? '<div class="newbadge">NEW</div>' : "")
         + '<div class="medal">' + medals[r.rank - 1] + "</div>"
         + '<div class="pname">' + esc(nameOf(r.e)) + "</div>"
-        + '<div class="pdiv">' + esc(r.e.division || "") + "</div>"
-        + '<div class="pscore">' + r.e.score + '<span class="unit"> ' + unit + "</span></div>"
+        + '<div class="pdiv">' + sub + "</div>"
+        + '<div class="pscore">' + r.e.score + '<span class="unit"> 点</span></div>'
         + "</div>";
     } else {
       rest += '<div class="row"><div class="rank">' + r.rank + '</div>'
         + '<div class="rname"><div class="n">' + esc(nameOf(r.e)) + "</div>"
-        + (r.e.division ? '<div class="d">' + esc(r.e.division) + "</div>" : "")
+        + (sub ? '<div class="d">' + sub + "</div>" : "")
         + "</div>" + nb
-        + '<div class="rscore">' + r.e.score + '<span class="unit"> ' + unit + "</span></div></div>";
+        + '<div class="rscore">' + r.e.score + '<span class="unit"> 点</span></div></div>';
     }
   });
   document.getElementById("podium").innerHTML = pod;
   document.getElementById("list").innerHTML = rest ||
     (pod ? "" : '<div class="empty">まだ記録がありません。<br>いちばんのりを狙おう!</div>');
+  var attempts = 0;
+  filtered.forEach(function(p){ attempts += p.tries; });
   document.getElementById("count").textContent =
-    filtered.length ? "エントリー " + filtered.length + " 件" : "";
+    filtered.length ? filtered.length + " ペア · のべ " + attempts + " 回挑戦" : "";
 
   var top = rows.length ? rows[0] : null;
-  var key = game + "|" + division;
   if (top && !q){
+    var k = division;
     var id = top.e.id;
-    if (lastTop[key] && lastTop[key] !== id && isNew(top.e)) flash("&#128081; " + esc(nameOf(top.e)) + " さんが1位に!");
-    lastTop[key] = id;
+    if (lastTopKey[k] && lastTopKey[k] !== id && isNew(top.e)) flash("&#128081; " + esc(nameOf(top.e)) + " が1位に!");
+    lastTopKey[k] = id;
   }
 }
 
@@ -215,12 +294,6 @@ function load(){
   }).catch(function(){});
 }
 
-document.getElementById("tabs").addEventListener("click", function(ev){
-  var t = ev.target.closest(".tab"); if (!t) return;
-  game = t.getAttribute("data-g"); division = "";
-  document.querySelectorAll(".tab").forEach(function(x){ x.classList.toggle("on", x === t); });
-  render();
-});
 document.getElementById("chips").addEventListener("click", function(ev){
   var c = ev.target.closest(".chip"); if (!c) return;
   division = c.getAttribute("data-d");
