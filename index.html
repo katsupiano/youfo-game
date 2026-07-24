@@ -6,74 +6,79 @@
 <title>YOU.FO リングラリー ランキング</title>
 <style>
 :root{
-  --red:#d5102a; --red-dark:#a80c20; --ink:#1b1b1f; --paper:#f7f6f3;
-  --card:#ffffff; --line:#e8e5df; --muted:#8a8781; --gold:#c9a227;
+  --navy:#1d2d5b; --navy-dark:#142046; --blue:#005bbb; --blue-dark:#004a99;
+  --red:#d62828; --ink:#1f2a44; --paper:#f7f8fb;
+  --card:#ffffff; --line:#e3e8f0; --muted:#6b7690; --gold:#c9a227;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{font-size:16px}
 body{
-  font-family:"Hiragino Kaku Gothic ProN","Hiragino Sans","Noto Sans JP",system-ui,sans-serif;
+  font-family:Arial,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium",Meiryo,sans-serif;
   background:var(--paper); color:var(--ink); min-height:100vh;
 }
 .wrap{max-width:640px;margin:0 auto;padding:0 14px 90px}
 header.hero{
-  background:linear-gradient(120deg,var(--red) 0%,var(--red-dark) 100%);
-  color:#fff; padding:20px 18px 16px; position:relative; overflow:hidden;
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  color:#fff; padding:22px 18px 18px; position:relative; overflow:hidden;
 }
 header.hero::after{
   content:""; position:absolute; right:-40px; top:-60px; width:190px; height:190px;
-  border:14px solid rgba(255,255,255,.14); border-radius:50%;
+  border:14px solid rgba(255,255,255,.10); border-radius:50%;
 }
 header.hero::before{
   content:""; position:absolute; right:52px; top:118px; width:70px; height:8px;
-  background:rgba(255,255,255,.18); border-radius:4px; transform:rotate(-35deg);
+  background:var(--red); opacity:.55; border-radius:4px; transform:rotate(-35deg);
 }
-.hero .kicker{font-size:.72rem; letter-spacing:.22em; opacity:.9; font-weight:700}
-.hero h1{font-size:1.42rem; font-weight:800; line-height:1.3; margin-top:2px}
-.hero .sub{font-size:.78rem; opacity:.85; margin-top:4px}
+.hero .kicker{font-size:.72rem; letter-spacing:.22em; opacity:.85; font-weight:700}
+.hero h1{font-size:1.42rem; font-weight:700; line-height:1.35; margin-top:2px}
+.hero .sub{font-size:.78rem; opacity:.8; margin-top:4px}
+.season{
+  display:inline-block; margin-top:10px; background:rgba(255,255,255,.14); color:#fff;
+  font-size:.7rem; font-weight:700; padding:4px 12px; border-radius:999px; letter-spacing:.02em;
+}
 .concept{display:flex; gap:6px; flex-wrap:wrap; margin:14px 0 0}
 .cchip{
   background:#fff; border:1.5px solid var(--line); border-radius:999px;
-  font-size:.72rem; font-weight:800; padding:6px 12px; color:var(--ink);
+  font-size:.72rem; font-weight:700; padding:6px 12px; color:var(--navy);
 }
 .rules{
-  background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+  background:var(--card); border-radius:14px; box-shadow:0 8px 24px rgba(29,45,91,.08);
   margin:10px 0 14px; overflow:hidden;
 }
 .rules summary{
-  list-style:none; cursor:pointer; padding:13px 16px; font-weight:800; font-size:.92rem;
-  display:flex; align-items:center; justify-content:space-between;
+  list-style:none; cursor:pointer; padding:13px 16px; font-weight:700; font-size:.92rem;
+  display:flex; align-items:center; justify-content:space-between; color:var(--navy);
 }
 .rules summary::-webkit-details-marker{display:none}
 .rules summary .arw{transition:.2s; color:var(--muted)}
 .rules[open] summary .arw{transform:rotate(90deg)}
 .rbody{padding:0 16px 16px; font-size:.85rem; line-height:1.75}
-.rbody h3{font-size:.8rem; color:var(--red); margin:14px 0 6px; letter-spacing:.05em}
+.rbody h3{font-size:.8rem; color:var(--blue); margin:14px 0 6px; letter-spacing:.05em}
 .rbody h3:first-child{margin-top:0}
 .rtable{width:100%; border-collapse:collapse; font-size:.82rem; margin:4px 0}
 .rtable td{border-top:1px solid var(--line); padding:7px 4px; vertical-align:top}
 .rtable tr:first-child td{border-top:none}
-.rtable td:first-child{font-weight:800; white-space:nowrap; padding-right:12px; color:var(--muted); width:6.5em}
+.rtable td:first-child{font-weight:700; white-space:nowrap; padding-right:12px; color:var(--muted); width:6.5em}
 .score3{display:flex; gap:6px; margin:6px 0 2px}
 .sc{flex:1; border:1.5px solid var(--line); border-radius:10px; text-align:center; padding:8px 2px}
-.sc b{display:block; font-size:1.15rem; color:var(--red)}
+.sc b{display:block; font-size:1.15rem; color:var(--blue)}
 .sc span{font-size:.68rem; color:var(--muted); font-weight:700; line-height:1.3; display:block; margin-top:2px}
 .note-online{
-  background:#fff5f6; border:1.5px dashed var(--red); border-radius:10px;
+  background:#fff5f5; border:1.5px dashed var(--red); border-radius:10px;
   padding:10px 12px; font-size:.8rem; line-height:1.7; margin-top:8px;
 }
 .note-online b{color:var(--red)}
 .rsrc{font-size:.68rem; color:var(--muted); margin-top:10px}
 .podium{display:flex; gap:8px; align-items:stretch; margin-bottom:12px}
 .pcard{
-  flex:1; background:var(--card); border:1.5px solid var(--line); border-radius:14px;
+  flex:1; background:var(--card); border-radius:14px; box-shadow:0 8px 24px rgba(29,45,91,.08);
   padding:14px 8px 12px; text-align:center; position:relative;
 }
-.pcard.first{border-color:var(--gold); box-shadow:0 4px 14px rgba(201,162,39,.18)}
+.pcard.first{box-shadow:0 8px 24px rgba(201,162,39,.28); outline:1.5px solid var(--gold)}
 .pcard .medal{font-size:1.5rem}
-.pcard .pname{font-weight:800; font-size:.92rem; margin-top:4px; word-break:break-all; line-height:1.25}
+.pcard .pname{font-weight:700; font-size:.92rem; margin-top:4px; word-break:break-all; line-height:1.25; color:var(--navy)}
 .pcard .pdiv{font-size:.68rem; color:var(--muted); margin-top:2px; min-height:1em}
-.pcard .pscore{font-size:1.5rem; font-weight:900; color:var(--red); margin-top:6px}
+.pcard .pscore{font-size:1.5rem; font-weight:800; color:var(--blue); margin-top:6px}
 .pcard .unit{font-size:.72rem; font-weight:700; color:var(--muted)}
 .newbadge{
   position:absolute; top:-8px; right:-4px; background:var(--red); color:#fff;
@@ -88,16 +93,16 @@ header.hero::before{
   border-radius:999px; padding:5px 13px; font-size:.8rem; font-weight:700;
   white-space:nowrap; cursor:pointer;
 }
-.chip.on{border-color:var(--ink); color:#fff; background:var(--ink)}
+.chip.on{border-color:var(--navy); color:#fff; background:var(--navy)}
 .note{font-size:.72rem; color:var(--muted); text-align:center; margin:8px 0}
-.list{background:var(--card); border:1.5px solid var(--line); border-radius:14px; overflow:hidden}
+.list{background:var(--card); border-radius:14px; box-shadow:0 8px 24px rgba(29,45,91,.08); overflow:hidden}
 .row{display:flex; align-items:center; padding:11px 14px; border-top:1px solid var(--line); gap:12px}
 .row:first-child{border-top:none}
-.rank{width:2em; font-weight:900; font-size:1.05rem; color:var(--muted); text-align:center; flex-shrink:0}
+.rank{width:2em; font-weight:800; font-size:1.05rem; color:var(--muted); text-align:center; flex-shrink:0}
 .rname{flex:1; min-width:0}
-.rname .n{font-weight:700; font-size:.95rem; word-break:break-all; line-height:1.3}
+.rname .n{font-weight:700; font-size:.95rem; word-break:break-all; line-height:1.3; color:var(--navy)}
 .rname .d{font-size:.68rem; color:var(--muted)}
-.rscore{font-weight:900; font-size:1.15rem; color:var(--ink); flex-shrink:0}
+.rscore{font-weight:800; font-size:1.15rem; color:var(--ink); flex-shrink:0}
 .rscore .unit{font-size:.7rem; color:var(--muted); font-weight:700}
 .row .nb{background:var(--red); color:#fff; font-size:.58rem; font-weight:800; border-radius:999px; padding:2px 7px; flex-shrink:0}
 .empty{padding:38px 10px; text-align:center; color:var(--muted); font-size:.88rem; line-height:1.8}
@@ -106,9 +111,9 @@ header.hero::before{
   width:100%; border:1.5px solid var(--line); border-radius:12px; padding:11px 14px;
   font-size:16px; background:var(--card); outline:none;
 }
-.searchbox input:focus{border-color:var(--red)}
+.searchbox input:focus{border-color:var(--blue)}
 .statusbar{
-  position:fixed; bottom:0; left:0; right:0; background:rgba(27,27,31,.92); color:#fff;
+  position:fixed; bottom:0; left:0; right:0; background:rgba(20,32,70,.94); color:#fff;
   backdrop-filter:blur(6px); font-size:.72rem; padding:9px 16px; display:flex;
   justify-content:space-between; align-items:center;
 }
@@ -121,11 +126,7 @@ header.hero::before{
   opacity:0; pointer-events:none; transition:opacity .3s; white-space:nowrap;
 }
 .flash.show{opacity:1}
-.sectionttl{font-size:.8rem; font-weight:800; color:var(--muted); letter-spacing:.08em; margin:4px 0 8px}
-.season{
-  display:inline-block; margin-top:8px; background:rgba(255,255,255,.16); color:#fff;
-  font-size:.7rem; font-weight:800; padding:4px 11px; border-radius:999px; letter-spacing:.02em;
-}
+.sectionttl{font-size:.8rem; font-weight:700; color:var(--muted); letter-spacing:.08em; margin:4px 0 8px}
 </style>
 </head>
 <body>
@@ -146,7 +147,7 @@ header.hero::before{
     <summary>&#128214; ルールと参加方法 <span class="arw">&#9654;</span></summary>
     <div class="rbody">
       <h3>リングラリーとは</h3>
-      YOU.FO公式のペア協力型ラリー種目。2人で向かい合ってリングを投げ合い、2分間の合計スコアで競えます。チーム戦のリングクロスと違って<b>2人だけで競技が成立</b>し、同じ時間・同じ会場に集まらなくても記録で競い合えるのが特徴です。
+      YOU.FO公式のペア協力型ラリー種目。2人で向かい合ってリングを投げ合い、2分間の合計スコアで競います。チーム戦のリングクロスと違って<b>2人だけで競技が成立</b>し、同じ時間・同じ会場に集まらなくても記録で競い合えるのが特徴です。
       <h3>基本ルール</h3>
       <table class="rtable">
         <tr><td>人数</td><td>2人1組(ペア)</td></tr>
@@ -215,11 +216,14 @@ function bestPerPair(list){
   return Object.keys(map).map(function(k){ return map[k]; });
 }
 
-// 日付 + 体験会名/会場 + 部門 + 挑戦回数 をまとめた表示用サブテキスト
+// 日付(event.event_date) + 会場 + 部門 + 挑戦回数 をまとめた表示用サブテキスト
 function subLine(r){
-  var t = new Date(r.e.created_at);
-  var parts = [(t.getMonth() + 1) + "/" + t.getDate()];
-  if (r.e.event_label) parts.push(esc(r.e.event_label));
+  var parts = [];
+  if (r.e.event && r.e.event.event_date){
+    var ymd = r.e.event.event_date.split("-");
+    parts.push(parseInt(ymd[1], 10) + "/" + parseInt(ymd[2], 10));
+    if (r.e.event.venue) parts.push(esc(r.e.event.venue));
+  }
   if (r.e.division) parts.push(esc(r.e.division));
   if (r.tries > 1) parts.push("挑戦" + r.tries + "回");
   return parts.join(" · ");
