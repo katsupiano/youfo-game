@@ -237,11 +237,12 @@ function markBest(){
 }
 
 function fillFilters(){
-  var evs = {}, divs = {};
+  var evs = {}, divs = {}, hasNoDiv = false;
   all.forEach(function(e){
     var el = eventLabel(e);
     if (el) evs[el] = 1;
     if (e.division) divs[e.division] = 1;
+    else hasNoDiv = true;
   });
   var evOpts = '<option value="">すべてのイベント</option>';
   Object.keys(evs).sort().reverse().forEach(function(k){
@@ -249,6 +250,7 @@ function fillFilters(){
   });
   document.getElementById("fEvent").innerHTML = evOpts;
   var dvOpts = '<option value="">すべての部門</option>';
+  if (hasNoDiv) dvOpts += '<option value="__none__">部門なし(未記載)</option>';
   Object.keys(divs).sort().forEach(function(k){
     dvOpts += '<option value="' + esc(k) + '">' + esc(k) + "</option>";
   });
@@ -263,7 +265,8 @@ function filtered(){
   var list = all.filter(function(e){
     if (!showGone && e.deleted) return false;
     if (fe && eventLabel(e) !== fe) return false;
-    if (fd && e.division !== fd) return false;
+    if (fd === "__none__"){ if (e.division) return false; }
+    else if (fd && e.division !== fd) return false;
     if (ft){
       var hay = ((e.name1 || "") + " " + (e.name2 || "")).toLowerCase();
       if (hay.indexOf(ft) < 0) return false;
