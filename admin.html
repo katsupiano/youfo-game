@@ -124,10 +124,10 @@ h2{font-size:1rem; margin-bottom:4px; color:var(--navy)}
   <div class="ok" id="okmsg"></div>
   <div class="card">
     <label class="fl" style="margin-top:0">ニックネーム(1人目)</label>
-    <input id="name1" type="text" placeholder="例: かつさん" autocomplete="off">
+    <input id="name1" type="text" placeholder="例: たろう" autocomplete="off">
     <label class="fl">ニックネーム(2人目)</label>
-    <input id="name2" type="text" placeholder="例: ゆうさん" autocomplete="off">
-    <p class="rulehint">&#8251; リングラリーは2人1組。同じペアが何回挑戦しても、ランキングにはベストスコアだけが載ります(毎回同じ表記で入力してください)。</p>
+    <input id="name2" type="text" placeholder="例: はなこ" autocomplete="off">
+    <p class="rulehint">&#8251; <b>「さん」「くん」などの敬称は付けずに</b>入力してください(付いていても自動で外れます)。<br>&#8251; リングラリーは2人1組。同じペアが何回挑戦しても、ランキングにはベストスコアだけが載ります(毎回同じ表記で入力してください)。</p>
 
     <label class="fl">イベント(日程 × 会場・任意)</label>
     <div class="eventrow">
@@ -180,6 +180,7 @@ h2{font-size:1rem; margin-bottom:4px; color:var(--navy)}
     <h2>直近の登録 <span class="hint">(まちがえたら取消)</span></h2>
     <div id="hist"></div>
   </div>
+  <button class="btn sub" onclick="location.href='./records.html'">&#128202; 記録データベースを開く(全履歴・CSV)</button>
   <button class="btn sub" onclick="location.href='./index.html'">&#128065; ランキングページを開く</button>
 </div>
 <script>
@@ -192,6 +193,23 @@ function esc(s){
     return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
   });
 }
+// 敬称は付けない運用。入力欄を離れた時点で見えるかたちで落とす
+var HONORIFIC_RE = /(さん|サン|くん|クン|君|ちゃん|チャン|さま|サマ|様|氏)$/;
+function stripHonorific(s){
+  var out = String(s == null ? "" : s).trim();
+  for (var i = 0; i < 2; i++){
+    var next = out.replace(HONORIFIC_RE, "").trim();
+    if (!next || next === out) break;
+    out = next;
+  }
+  return out || String(s == null ? "" : s).trim();
+}
+["name1", "name2"].forEach(function(id){
+  document.getElementById(id).addEventListener("blur", function(){
+    this.value = stripHonorific(this.value);
+  });
+});
+
 function pin(){ return localStorage.getItem("tk_pin") || ""; }
 function gate(show){ document.getElementById("gate").style.display = show ? "flex" : "none"; }
 
@@ -293,8 +311,10 @@ function msg(text, isErr){
 }
 
 document.getElementById("submit").addEventListener("click", function(){
-  var n1 = document.getElementById("name1").value.trim();
-  var n2 = document.getElementById("name2").value.trim();
+  var n1 = stripHonorific(document.getElementById("name1").value);
+  var n2 = stripHonorific(document.getElementById("name2").value);
+  document.getElementById("name1").value = n1;
+  document.getElementById("name2").value = n2;
   var eventId = document.getElementById("eventSelect").value || null;
   var dv = document.getElementById("division").value.trim();
   var sc = document.getElementById("score").value;

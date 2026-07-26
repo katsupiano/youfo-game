@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>記録データベース | YOU.FO リングラリー</title>
+<style>
+:root{
+  --navy:#1d2d5b; --navy-dark:#142046; --blue:#005bbb; --blue-dark:#004a99;
+  --red:#d62828; --ink:#1f2a44; --paper:#f7f8fb;
+  --card:#ffffff; --line:#e3e8f0; --muted:#6b7690; --gold:#c9a227;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{font-size:16px}
+body{
+  font-family:Arial,"Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic Medium",Meiryo,sans-serif;
+  background:var(--paper); color:var(--ink); min-height:100vh;
+}
+.wrap{max-width:1040px;margin:0 auto;padding:0 14px 48px}
+header.hero{
+  background:linear-gradient(135deg,var(--navy) 0%,var(--navy-dark) 100%);
+  color:#fff; padding:22px 18px 16px; position:relative; overflow:hidden;
+}
+header.hero::after{
+  content:""; position:absolute; right:-40px; top:-60px; width:190px; height:190px;
+  border:14px solid rgba(255,255,255,.10); border-radius:50%;
+}
+.hero .kicker{font-size:.72rem; letter-spacing:.22em; opacity:.85; font-weight:700}
+.hero h1{font-size:1.42rem; font-weight:700; line-height:1.35; margin-top:2px}
+.hero .sub{font-size:.78rem; opacity:.8; margin-top:4px}
+.card{background:var(--card); border-radius:14px; box-shadow:0 8px 24px rgba(29,45,91,.08); padding:16px; margin-top:14px}
+
+.stats{display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-top:14px}
+.stat{background:var(--card); border-radius:14px; box-shadow:0 8px 24px rgba(29,45,91,.08); padding:14px 12px; text-align:center}
+.stat .n{font-size:1.5rem; font-weight:800; color:var(--blue); line-height:1.2}
+.stat .l{font-size:.7rem; color:var(--muted); font-weight:700; margin-top:3px}
+
+.filters{display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+.filters select, .filters input[type=text]{
+  border:1.5px solid var(--line); border-radius:999px; padding:9px 14px; font-size:.86rem;
+  outline:none; background:#fff; color:var(--ink); font-family:inherit;
+}
+.filters input[type=text]{flex:1; min-width:160px}
+.filters select:focus, .filters input:focus{border-color:var(--blue)}
+.filters select{appearance:none;-webkit-appearance:none; background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7690' stroke-width='2' fill='none' fill-rule='evenodd'/%3E%3C/svg%3E"); background-repeat:no-repeat; background-position:right 13px center; padding-right:32px}
+.csvbtn{
+  border:none; background:var(--blue); color:#fff; border-radius:999px; padding:10px 18px;
+  font-size:.86rem; font-weight:700; cursor:pointer; white-space:nowrap; font-family:inherit;
+}
+.csvbtn:hover{background:var(--blue-dark)}
+.toggle{display:flex; align-items:center; gap:6px; font-size:.8rem; color:var(--muted); font-weight:700; cursor:pointer; white-space:nowrap}
+.toggle input{width:16px; height:16px; accent-color:var(--blue); cursor:pointer}
+
+.tablewrap{overflow-x:auto; margin-top:4px}
+table{width:100%; border-collapse:collapse; font-size:.86rem; min-width:640px}
+th{
+  text-align:left; font-size:.72rem; color:var(--muted); font-weight:700; letter-spacing:.04em;
+  padding:9px 10px; border-bottom:2px solid var(--line); white-space:nowrap; cursor:pointer; user-select:none;
+}
+th:hover{color:var(--blue)}
+th .ar{opacity:.4; font-size:.7rem}
+th.on{color:var(--blue)}
+th.on .ar{opacity:1}
+td{padding:11px 10px; border-bottom:1px solid var(--line); vertical-align:middle}
+tbody tr:hover{background:#f9fafd}
+tr.gone td{opacity:.4}
+tr.gone .pair{text-decoration:line-through}
+.pair{font-weight:700; color:var(--navy)}
+.sc{font-weight:800; color:var(--blue); white-space:nowrap}
+.badge{display:inline-block; font-size:.66rem; font-weight:700; padding:2px 8px; border-radius:999px; background:#eef1f7; color:var(--muted); white-space:nowrap}
+.badge.best{background:#fdf6e0; color:#8a6d0b}
+.badge.gone{background:#fdeaea; color:var(--red)}
+.empty{text-align:center; color:var(--muted); padding:34px 10px; font-size:.9rem; line-height:1.8}
+
+h2{font-size:1rem; margin-bottom:10px; color:var(--navy)}
+.hint{font-size:.74rem; color:var(--muted); font-weight:400}
+.count{font-size:.76rem; color:var(--muted); margin-top:10px; text-align:right}
+
+#gate{position:fixed; inset:0; background:var(--paper); z-index:100; display:flex; align-items:center; justify-content:center; padding:20px}
+#gate .card{width:100%; max-width:360px; margin-top:0}
+#gate label{display:block; font-size:.78rem; font-weight:700; color:var(--muted); margin:12px 0 5px}
+#gate input{width:100%; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font-size:16px; outline:none; font-family:inherit}
+#gate input:focus{border-color:var(--blue)}
+#gate button{width:100%; border:none; border-radius:999px; padding:16px; font-size:1.05rem; font-weight:700; cursor:pointer; margin-top:16px; background:var(--blue); color:#fff; font-family:inherit}
+
+.nav{display:flex; gap:8px; margin-top:14px}
+.nav a{
+  flex:1; text-align:center; background:#fff; color:var(--navy); border:1.5px solid var(--line);
+  border-radius:999px; padding:11px; font-size:.85rem; font-weight:700; text-decoration:none;
+}
+@media (max-width:640px){
+  .stats{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="gate">
+  <div class="card">
+    <h2>&#128274; 運営スタッフ用</h2>
+    <p class="hint">PINを入力してください</p>
+    <label>PIN</label>
+    <input id="pin" type="password" inputmode="numeric" autocomplete="off">
+    <button id="enter">入る</button>
+    <p class="hint" id="gateerr" style="color:var(--red); margin-top:8px; display:none">PINが違います</p>
+  </div>
+</div>
+<header class="hero">
+  <div class="kicker">STAFF ONLY</div>
+  <h1>記録データベース</h1>
+  <div class="sub">これまでの全挑戦履歴 · CSVエクスポート対応</div>
+</header>
+<div class="wrap">
+  <div class="stats">
+    <div class="stat"><div class="n" id="sRec">-</div><div class="l">記録数</div></div>
+    <div class="stat"><div class="n" id="sPair">-</div><div class="l">ペア数</div></div>
+    <div class="stat"><div class="n" id="sEvent">-</div><div class="l">イベント数</div></div>
+    <div class="stat"><div class="n" id="sTop">-</div><div class="l">最高スコア</div></div>
+  </div>
+
+  <div class="card">
+    <div class="filters">
+      <select id="fEvent"><option value="">すべてのイベント</option></select>
+      <select id="fDiv"><option value="">すべての部門</option></select>
+      <input id="fText" type="text" placeholder="名前でしぼりこむ" autocomplete="off">
+      <label class="toggle"><input type="checkbox" id="fGone">取消分も表示</label>
+      <button class="csvbtn" id="csv">&#11015; CSVダウンロード</button>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead>
+          <tr>
+            <th data-k="date">日付 <span class="ar">&#9662;</span></th>
+            <th data-k="venue">会場 <span class="ar">&#9662;</span></th>
+            <th data-k="pair">ペア <span class="ar">&#9662;</span></th>
+            <th data-k="division">部門 <span class="ar">&#9662;</span></th>
+            <th data-k="score">スコア <span class="ar">&#9662;</span></th>
+            <th data-k="created">登録日時 <span class="ar">&#9662;</span></th>
+          </tr>
+        </thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
+    <div class="count" id="cnt"></div>
+  </div>
+
+  <div class="nav">
+    <a href="./index.html">&#127942; ランキング</a>
+    <a href="./admin.html">&#9999; 記録入力</a>
+  </div>
+</div>
+<script>
+var BASE = "https://bhvtqqaedqjrdlnvuekd.supabase.co/functions/v1/taikenkai";
+var all = [];
+var sortKey = "created";
+var sortDir = -1;
+
+function esc(s){
+  return String(s == null ? "" : s).replace(/[&<>"']/g, function(c){
+    return {"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c];
+  });
+}
+function pin(){ return localStorage.getItem("tk_pin") || ""; }
+function gate(show){ document.getElementById("gate").style.display = show ? "flex" : "none"; }
+
+function checkPin(p){
+  return fetch(BASE + "/api/checkpin", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pin: p })
+  }).then(function(r){ return r.ok; });
+}
+
+document.getElementById("enter").addEventListener("click", function(){
+  var p = document.getElementById("pin").value.trim();
+  checkPin(p).then(function(ok){
+    if (ok){ localStorage.setItem("tk_pin", p); gate(false); load(); }
+    else document.getElementById("gateerr").style.display = "block";
+  });
+});
+document.getElementById("pin").addEventListener("keydown", function(ev){
+  if (ev.key === "Enter") document.getElementById("enter").click();
+});
+
+function pairKey(e){
+  var a = String(e.name1 || "").trim();
+  var b = String(e.name2 || "").trim();
+  return [a, b].sort().join(" / ");
+}
+function pairLabel(e){
+  return e.name2 ? e.name1 + " & " + e.name2 : e.name1;
+}
+function eventLabel(e){
+  if (!e.event || !e.event.event_date) return "";
+  var ymd = e.event.event_date.split("-");
+  return parseInt(ymd[1], 10) + "/" + parseInt(ymd[2], 10) + " " + e.event.venue;
+}
+function dateStr(e){
+  if (e.event && e.event.event_date) return e.event.event_date;
+  return String(e.created_at).slice(0, 10);
+}
+function dtStr(s){
+  var t = new Date(s);
+  return t.getFullYear() + "/" + (t.getMonth() + 1) + "/" + t.getDate() + " "
+    + ("0" + t.getHours()).slice(-2) + ":" + ("0" + t.getMinutes()).slice(-2);
+}
+
+function load(){
+  fetch(BASE + "/api/export", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ pin: pin() })
+  }).then(function(r){
+    if (!r.ok){ localStorage.removeItem("tk_pin"); gate(true); return null; }
+    return r.json();
+  }).then(function(d){
+    if (!d) return;
+    all = (d.entries || []).filter(function(e){ return e.game === "rally"; });
+    markBest();
+    fillFilters();
+    render();
+  });
+}
+
+// ペアごとのベストスコア(有効な記録の中で)に印を付ける
+function markBest(){
+  var best = {};
+  all.forEach(function(e){
+    if (e.deleted) return;
+    var k = pairKey(e);
+    if (!best[k] || e.score > best[k].score) best[k] = e;
+  });
+  all.forEach(function(e){
+    var k = pairKey(e);
+    e._best = !e.deleted && best[k] === e;
+  });
+}
+
+function fillFilters(){
+  var evs = {}, divs = {};
+  all.forEach(function(e){
+    var el = eventLabel(e);
+    if (el) evs[el] = 1;
+    if (e.division) divs[e.division] = 1;
+  });
+  var evOpts = '<option value="">すべてのイベント</option>';
+  Object.keys(evs).sort().reverse().forEach(function(k){
+    evOpts += '<option value="' + esc(k) + '">' + esc(k) + "</option>";
+  });
+  document.getElementById("fEvent").innerHTML = evOpts;
+  var dvOpts = '<option value="">すべての部門</option>';
+  Object.keys(divs).sort().forEach(function(k){
+    dvOpts += '<option value="' + esc(k) + '">' + esc(k) + "</option>";
+  });
+  document.getElementById("fDiv").innerHTML = dvOpts;
+}
+
+function filtered(){
+  var fe = document.getElementById("fEvent").value;
+  var fd = document.getElementById("fDiv").value;
+  var ft = document.getElementById("fText").value.trim().toLowerCase();
+  var showGone = document.getElementById("fGone").checked;
+  var list = all.filter(function(e){
+    if (!showGone && e.deleted) return false;
+    if (fe && eventLabel(e) !== fe) return false;
+    if (fd && e.division !== fd) return false;
+    if (ft){
+      var hay = ((e.name1 || "") + " " + (e.name2 || "")).toLowerCase();
+      if (hay.indexOf(ft) < 0) return false;
+    }
+    return true;
+  });
+  var k = sortKey, dir = sortDir;
+  list.sort(function(a, b){
+    var va, vb;
+    if (k === "score"){ va = a.score; vb = b.score; }
+    else if (k === "date"){ va = dateStr(a); vb = dateStr(b); }
+    else if (k === "venue"){ va = eventLabel(a); vb = eventLabel(b); }
+    else if (k === "pair"){ va = pairLabel(a); vb = pairLabel(b); }
+    else if (k === "division"){ va = a.division || ""; vb = b.division || ""; }
+    else { va = a.created_at; vb = b.created_at; }
+    if (va < vb) return -1 * dir;
+    if (va > vb) return 1 * dir;
+    return 0;
+  });
+  return list;
+}
+
+function render(){
+  var list = filtered();
+  var out = "";
+  list.forEach(function(e){
+    var badges = "";
+    if (e._best) badges += ' <span class="badge best">ベスト</span>';
+    if (e.deleted) badges += ' <span class="badge gone">取消</span>';
+    out += '<tr class="' + (e.deleted ? "gone" : "") + '">'
+      + "<td>" + esc(dateStr(e)) + "</td>"
+      + "<td>" + (e.event ? esc(e.event.venue) : '<span class="hint">-</span>') + "</td>"
+      + '<td><span class="pair">' + esc(pairLabel(e)) + "</span>" + badges + "</td>"
+      + "<td>" + (e.division ? '<span class="badge">' + esc(e.division) + "</span>" : "") + "</td>"
+      + '<td class="sc">' + e.score + " 点</td>"
+      + '<td class="hint">' + esc(dtStr(e.created_at)) + "</td>"
+      + "</tr>";
+  });
+  document.getElementById("tb").innerHTML = out
+    || '<tr><td colspan="6" class="empty">条件に合う記録がありません。<br>フィルタを変えてみてください。</td></tr>';
+
+  var live = all.filter(function(e){ return !e.deleted; });
+  var pairs = {}, events = {}, top = 0;
+  live.forEach(function(e){
+    pairs[pairKey(e)] = 1;
+    var el = eventLabel(e);
+    if (el) events[el] = 1;
+    if (e.score > top) top = e.score;
+  });
+  document.getElementById("sRec").textContent = live.length;
+  document.getElementById("sPair").textContent = Object.keys(pairs).length;
+  document.getElementById("sEvent").textContent = Object.keys(events).length;
+  document.getElementById("sTop").textContent = top || "-";
+  document.getElementById("cnt").textContent = "表示中: " + list.length + " 件 / 全 " + all.length + " 件";
+
+  document.querySelectorAll("th").forEach(function(th){
+    th.classList.toggle("on", th.getAttribute("data-k") === sortKey);
+    var ar = th.querySelector(".ar");
+    if (ar) ar.innerHTML = th.getAttribute("data-k") === sortKey
+      ? (sortDir === 1 ? "&#9652;" : "&#9662;") : "&#9662;";
+  });
+}
+
+document.querySelectorAll("th").forEach(function(th){
+  th.addEventListener("click", function(){
+    var k = th.getAttribute("data-k");
+    if (sortKey === k) sortDir = -sortDir;
+    else { sortKey = k; sortDir = (k === "score" || k === "date" || k === "created") ? -1 : 1; }
+    render();
+  });
+});
+["fEvent", "fDiv", "fGone"].forEach(function(id){
+  document.getElementById(id).addEventListener("change", render);
+});
+document.getElementById("fText").addEventListener("input", render);
+
+function csvCell(v){
+  var s = String(v == null ? "" : v);
+  return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+}
+document.getElementById("csv").addEventListener("click", function(){
+  var list = filtered();
+  var head = ["日付", "会場", "参加者1", "参加者2", "部門", "スコア", "ベスト記録", "状態", "登録日時"];
+  var rows = [head.join(",")];
+  list.forEach(function(e){
+    rows.push([
+      dateStr(e),
+      e.event ? e.event.venue : "",
+      e.name1 || "",
+      e.name2 || "",
+      e.division || "",
+      e.score,
+      e._best ? "○" : "",
+      e.deleted ? "取消" : "有効",
+      dtStr(e.created_at)
+    ].map(csvCell).join(","));
+  });
+  // Excelで文字化けしないようUTF-8 BOM付き
+  var blob = new Blob(["﻿" + rows.join("\r\n")], { type: "text/csv;charset=utf-8" });
+  var t = new Date();
+  var stamp = t.getFullYear() + ("0" + (t.getMonth() + 1)).slice(-2) + ("0" + t.getDate()).slice(-2);
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "youfo_ringrally_" + stamp + ".csv";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(a.href);
+});
+
+if (pin()){
+  checkPin(pin()).then(function(ok){
+    if (ok){ gate(false); load(); }
+    else { localStorage.removeItem("tk_pin"); gate(true); }
+  });
+} else {
+  gate(true);
+}
+</script>
+</body>
+</html>
